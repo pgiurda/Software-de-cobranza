@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Cobranza</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📦 Sistema de Gestión de Cobranza</h1>
+            <p>Manage your sales with barcode scanning</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Sección de Productos -->
+            <div class="section products-section">
+                <h2>📋 Gestionar Productos</h2>
+                
+                <div class="form-group">
+                    <input type="text" id="productName" placeholder="Nombre del producto" class="input-field">
+                    <input type="number" id="productPrice" placeholder="Precio" class="input-field" step="0.01" min="0">
+                    <input type="text" id="productBarcode" placeholder="Código de barras" class="input-field">
+                    <button onclick="addProduct()" class="btn btn-primary">Agregar Producto</button>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <button onclick="exportToExcel()" class="btn" style="background: #48bb78; color: white;">📥 Descargar Excel</button>
+                    <button onclick="document.getElementById('excelFile').click()" class="btn" style="background: #3182ce; color: white;">📤 Cargar Excel</button>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" style="display: none;" onchange="importFromExcel(event)">
+                </div>
+
+                <div class="products-list">
+                    <h3>Productos Registrados</h3>
+                    <div id="productsList" class="products-table"></div>
+                </div>
+            </div>
+
+            <!-- Sección de Punto de Venta -->
+            <div class="section pos-section">
+                <h2>🛒 Punto de Venta</h2>
+                
+                <div class="form-group">
+                    <input type="text" id="barcodeInput" placeholder="Escanear código de barras..." class="input-field barcode-input" autofocus>
+                    <button onclick="clearCart()" class="btn btn-secondary">Limpiar Carrito</button>
+                </div>
+
+                <!-- Carrito de Compra -->
+                <div class="cart-section">
+                    <h3>Carrito de Compra</h3>
+                    <div id="cartItems" class="cart-items"></div>
+                    
+                    <div class="cart-summary">
+                        <div class="summary-row">
+                            <span>Cantidad de artículos:</span>
+                            <strong id="itemCount">0</strong>
+                        </div>
+                        <div class="summary-row total">
+                            <span>TOTAL:</span>
+                            <strong id="total">$0.00</strong>
+                        </div>
+                    </div>
+
+                    <div class="payment-section">
+                        <input type="number" id="paymentAmount" placeholder="Monto a pagar" class="input-field" step="0.01" min="0">
+                        <button onclick="processPayment()" class="btn btn-success">Cobrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para cambio -->
+    <div id="changeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Resumen de Pago</h2>
+            <div class="modal-body">
+                <p><strong>Total:</strong> $<span id="modalTotal">0.00</span></p>
+                <p><strong>Monto pagado:</strong> $<span id="modalPaid">0.00</span></p>
+                <p><strong>Cambio:</strong> $<span id="modalChange">0.00</span></p>
+            </div>
+            <button onclick="finishTransaction()" class="btn btn-primary">Finalizar Transacción</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@latest/dist/xlsx.full.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
