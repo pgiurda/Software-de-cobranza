@@ -15,6 +15,39 @@ document.addEventListener('DOMContentLoaded', function() {
             this.value = '';
         }
     });
+
+    // Listener para el input de búsqueda por nombre
+    const nameSearchInput = document.getElementById('nameSearchInput');
+    nameSearchInput.addEventListener('input', function() {
+        showProductSuggestions(this.value);
+    });
+
+    nameSearchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const suggestions = document.getElementById('productSuggestions');
+            if (suggestions.style.display === 'block') {
+                // Si hay sugerencias visibles, seleccionar la primera
+                const firstSuggestion = suggestions.querySelector('.suggestion-item');
+                if (firstSuggestion) {
+                    selectProduct(firstSuggestion.dataset.productId);
+                }
+            } else {
+                // Si no hay sugerencias, mostrar mensaje
+                if (this.value.trim()) {
+                    alert('No se encontraron productos con ese nombre');
+                }
+            }
+            this.value = '';
+            hideSuggestions();
+        }
+    });
+
+    // Ocultar sugerencias al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-container')) {
+            hideSuggestions();
+        }
+    });
 });
 
 // Guardar productos en localStorage
@@ -170,6 +203,64 @@ function addToCart(barcode) {
     }
 
     renderCart();
+    focusBarcodeInput();
+}
+
+// Mostrar sugerencias de productos
+function showProductSuggestions(searchTerm) {
+    const suggestionsContainer = document.getElementById('productSuggestions');
+    
+    if (!searchTerm.trim()) {
+        hideSuggestions();
+        return;
+    }
+
+    const term = searchTerm.trim().toLowerCase();
+    const matchingProducts = products.filter(p => p.name.toLowerCase().includes(term));
+
+    if (matchingProducts.length === 0) {
+        hideSuggestions();
+        return;
+    }
+
+    suggestionsContainer.innerHTML = matchingProducts.map(product => `
+        <div class="suggestion-item" data-product-id="${product.id}" onclick="selectProduct(${product.id})">
+            <div class="suggestion-name">${escapeHtml(product.name)}</div>
+            <div class="suggestion-price">$${product.price.toFixed(2)}</div>
+        </div>
+    `).join('');
+
+    suggestionsContainer.style.display = 'block';
+}
+
+// Ocultar sugerencias
+function hideSuggestions() {
+    const suggestionsContainer = document.getElementById('productSuggestions');
+    suggestionsContainer.style.display = 'none';
+}
+
+// Seleccionar producto de las sugerencias
+function selectProduct(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Buscar si el producto ya está en el carrito
+    const existingItem = cart.find(item => item.id === product.id);
+
+    if (existingItem) {
+        existingItem.quantity++;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: 1
+        });
+    }
+
+    renderCart();
+    document.getElementById('nameSearchInput').value = '';
+    hideSuggestions();
     focusBarcodeInput();
 }
 

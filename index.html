@@ -44,6 +44,10 @@
                 
                 <div class="form-group">
                     <input type="text" id="barcodeInput" placeholder="Escanear código de barras..." class="input-field barcode-input" autofocus>
+                    <div class="search-container">
+                        <input type="text" id="nameSearchInput" placeholder="Buscar por nombre de producto..." class="input-field">
+                        <div id="productSuggestions" class="suggestions-list"></div>
+                    </div>
                     <button onclick="clearCart()" class="btn btn-secondary">Limpiar Carrito</button>
                 </div>
 
